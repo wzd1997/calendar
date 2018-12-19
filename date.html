@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style> 
+        *{
+            padding: 0%;
+            margin: 0%;
+            list-style: none;
+        }
+        .wrapper{
+            position: relative;
+            top: 50px;
+            left: 50px;
+            text-align: center;
+            width: 350px;
+            height: 500px;
+
+
+        }
+        .yearMonth{
+            width: 100%;
+            text-align: center;
+        }
+        .yearMonth .year_month{
+            display: inline-block;
+            width: 80%;
+        }
+
+        .week ul{
+            width: 100%;
+            height: 20px;
+            
+        }
+        .week ul li{
+            float: left;
+            width: 50px;
+            height: 20px;
+            line-height: 20px;
+            background-color: rgb(35, 145, 248);
+            color: white;
+        }
+        .date .span{
+            display: inline-block;
+            width: 50px;
+            height: 20px;
+            line-height: 20px;
+            color: rgba(0, 0, 0, 0.3)
+        }
+        .date .black{
+            display: inline-block;
+            width: 50px;
+            height: 20px;
+            font-size: 14px;
+            line-height: 20px;
+            color: black;
+        }
+        .left,
+        .right{
+            display: inline-block;
+            border: 5px solid rgb(35, 145, 248);
+            width: 0%;
+            height: 0%;
+            transform: rotateZ(45deg);
+        }
+        .left{
+            border-right: 5px solid transparent;
+            border-top: 5px solid transparent;
+        }
+        .right{
+            border-left: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="yearMonth">
+            <div class="left"></div>
+            <div class="year_month">
+                <span class="year">2018</span>年
+                <span class="month">12</span>月
+            </div>
+            <div class="right"></div>            
+        </div>
+        <div class="week">
+            <ul>
+                <li>日</li>
+                <li>一</li>
+                <li>二</li>
+                <li>三</li>
+                <li>四</li>
+                <li>五</li>
+                <li>六</li>
+            </ul>
+        </div>
+        <div class="date">
+           
+        </div>
+        <button>previous</button>
+        <button>next</button>
+    </div>
+    <script>
+        var previous = document.querySelector('.left');
+        var next = document.querySelector('.right');
+        var date = document.querySelector(".date");
+        var oMonth = document.querySelector('.year_month .month');
+        var oYear = document.querySelector('.year_month .year');
+        var day31 = [1,3,5,7,8,10,12];
+        var day30 = [4,6,9,11];
+        var day28 = [2];
+
+        function day (month,lastdate) {
+
+            let allDay,
+                preallDay,
+                pre2allDay,
+                firstweek,
+                lastweek,
+                lastweek2,
+                nextdate,
+                predate,
+                preMonth,
+                pre2Month,
+                tf;
+            
+            month = Number(oMonth.innerHTML);
+            year = Number(oYear.innerHTML);
+
+            //闰年
+            tf = year % 4 === 0 && year % 100 !== 0;
+
+
+            if(month === 1){
+                preMonth = 12;
+                pre2Month = 11; 
+            }else if(month === 2){
+                preMonth = month - 1;
+                pre2Month = 12;               
+            }else{
+                preMonth = month - 1;
+                pre2Month = month - 2;
+            }
+
+
+
+            //判断这个月有多少天
+            if(day31.indexOf(month) !== -1){
+                allDay = 31;
+            }else if(day30.indexOf(month) !== -1){
+                allDay = 30;
+            }else if(tf){
+                allDay = 29;
+            }else{
+                allDay = 28;
+            }
+            
+
+            //判断上个月有多少天
+            if(day31.indexOf(preMonth) !== -1){
+                preallDay = 31;
+            }else if(day30.indexOf(preMonth) !== -1){
+                preallDay = 30;
+            }else if(tf){ 
+                preallDay = 29;
+            }else{
+                preallDay = 28;
+            }
+
+
+            //判断上2个月有多少天
+            if(day31.indexOf(pre2Month) !== -1){
+                pre2allDay = 31;
+            }else if(day30.indexOf(pre2Month) !== -1){
+                pre2allDay = 30;
+            }else if(tf){ 
+                pre2allDay = 29;
+            }else{
+                pre2allDay = 28;
+            }
+
+            //创建文档碎片
+            var oFragmeng = document.createDocumentFragment();
+
+            //从上个月最后一周的第一天日期
+            var day = lastdate;
+            
+
+            //显示42天
+            for(let i = 0;i < 42;i ++){
+                var a = document.createElement('sapn');
+                a.setAttribute('class','span');
+                var oDay = document.createTextNode(day);
+
+                //第一个星期的日期由上个月判断
+                if(i < 7){
+
+                    //上个月天数判断何时为1号
+                    if( day >= preallDay){
+
+                        a.appendChild(oDay);
+                        day = 0;
+                        day ++;
+                    }else{
+                        a.appendChild(oDay);
+                        day ++;
+                        if(Number(a.innerHTML) <= 7){
+                            a.setAttribute("class","black")
+                        }
+                    }
+                }else {
+
+                    //这个月天数判断何时为1号
+                    if(day >= allDay){
+
+                        a.appendChild(oDay);
+                        day = 0;
+                        day ++;
+                        a.setAttribute("class","black")
+                    }else{
+                        a.appendChild(oDay);
+                        day ++;
+                        if(Number(a.innerHTML) >= 14 || i < 21){
+                            a.setAttribute("class","black")
+                        }
+                    }
+                }
+              
+                //创建好的span添加到文档碎片中
+                oFragmeng.appendChild(a);
+
+                //获取第一周 最后一周和倒数第二周的第一天日期
+                if(i == 0){
+                    firstweek = Number(a.innerHTML);
+                }
+                if(i == 28){
+                    lastweek = Number(a.innerHTML);
+                }
+                if(i == 35){
+                    lastweek2 = Number(a.innerHTML);
+                }
+                
+                
+
+            }
+            nextdate = lastweek > lastweek2 ? lastweek : lastweek2;
+
+
+            //将文档碎片添加到html中
+            date.appendChild(oFragmeng);
+
+            //计算出上个月从那天开始
+            predate = firstweek - 28;
+            if(predate > 0){
+                predate = predate - 7 + pre2allDay;
+            }else{
+                predate = predate + pre2allDay;
+            }
+            //返回这个月最后一个周日 和 上个月显示的第一天
+            return [nextdate,predate];
+
+        }
+       
+        var arr = day(oMonth.innerHTML,25);
+        var lastdate = arr[0];
+        var predate = arr[1];
+
+
+
+
+        next.addEventListener('click',function () {
+            date.innerHTML = "";
+
+            if(oMonth.innerHTML == "12"){               
+                oMonth.innerHTML = "1";
+                oYear.innerHTML = Number(oYear.innerHTML) + 1 +"";
+            }else{
+                oMonth.innerHTML = Number(oMonth.innerHTML) + 1 +"";              
+            }
+
+            arr = day(Number(oMonth.innerHTML),lastdate);
+ 
+            lastdate = arr[0];
+            predate = arr[1];
+            year = Number(oYear.innerHTML);
+        },false)
+
+
+        previous.addEventListener('click',function () {
+            date.innerHTML = "";
+
+            if(oMonth.innerHTML == "1"){               
+                oMonth.innerHTML = "12";
+                oYear.innerHTML = Number(oYear.innerHTML) - 1 + "";
+            }else{
+                oMonth.innerHTML = Number(oMonth.innerHTML) - 1 +"";              
+            }
+
+            arr = day(Number(oMonth.innerHTML),predate);
+            lastdate = arr[0];
+            predate = arr[1];
+            year = Number(oYear.innerHTML);
+        },false)
+        
+    </script>
+</body>
+</html>
